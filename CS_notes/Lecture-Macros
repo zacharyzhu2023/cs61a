@@ -1,0 +1,83 @@
+Macros
+
+List Representation
+- Scheme programs consist of expressions-primitives or combinations
+- Lists can represent combinations in SchemeError
+  - Building blocks for making a program to write a program
+- Begin allows for evaluating subexpressions in the same statement
+  - Evaluates up to the final expression in begin
+
+Macros
+- Macro is an operation performed on source code before evaluation
+  - Easiest to define macros in languages like Lisp
+- Scheme has a built-in macro special form
+
+Example 1
+
+(define-macro (twice expr)
+  (list 'begin expr expr'))
+
+(twice (print 2)) --> (begin (print 2) (print 2))
+When evaluated:
+2
+2
+
+Evaluate procedure for macro call expression
+- Evaluate the operator sub expression
+- Call macro procedure on operand expressions evaluate evaluating them
+- Evaluate expression returned from macro procedure
+
+(define-macro (twice f)
+  `(begin ,f ,f)
+)
+
+(define-macro (twice f)
+  (list 'begin f f)
+)
+Example 2
+
+(define-macro (check expr)
+  (list 'if expr ''pass
+    (list 'quote (list 'fail: expr))))
+
+(check (< x 0)) --> (if (< x 0) (quote pass) (quote (fail: (< x 0))))
+
+- Builds an expression that can tell us whet tells us what failed
+
+Example 3
+(define-macro (for symbol vals expr)
+  (list 'map '(lambda (list sym) expr) vals))
+- Macro special form makes it easier to automatically quote special forms
+
+
+Example 4: check to see if something is true/false
+(define (check val)
+  (if val 'passed 'failed)
+)
+
+(define-macro (check expr)
+  (list 'if expr ''passed
+    (list 'quote (list ''failed: expr)))
+)
+
+Example 5: define a for macro
+
+Step 1: map an expression over the values of a sequence
+(define (map function lst)
+  (if (null? lst) ()
+    (cons (function (car lst)) (map function (cdr lst)))
+  )
+)
+
+Step 2: define the macro
+(define-macro (for var lst expr)
+  '(list 'map '(list lambda (list var) expr) lst)
+)
+
+
+Quasiquotation
+- Basically regularly quotes where you can unquote expressions too
+(define b 2) --> b
+'(a b c) --> (a b c)
+`(a ,b c) --> (a 2 c)
+`(a ,(+ 2 b) c) --> (a 4 c)

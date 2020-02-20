@@ -1,0 +1,54 @@
+Lecture-Aggregation
+
+select [columns] from [table] where [expression] order by [expression]
+- This is the structure for a select statement in SQL
+- They each refer to the particular value in a column/row
+- Aggregate function: computes value of a group of rows
+
+* We have a table animals with columns: kind, legs, weight *
+
+select max(legs) from animals
+- max(legs) computes a value over numerous rows --> returns highest value of column legs in table animals
+  - Other aggregate functions include min, sum
+select sum(weight) from animals --> returns sum of weight of all entries in animals' weight column
+select max(legs-weight) + 5 from animals --> highest difference b/w legs and weight column. Then add 5 to the result
+select max(legs), min(weight) from animals --> returns table with both values (computed independently)
+
+Can also be combined with a where clause
+select min(legs), max(weight) from animals where name <> 't-rex'
+select avg(legs) from animals --> average
+select count(legs) from animals --> computes total number of rows of column
+select count(*) from animals --> computes total number of rows
+select count(distinct leg) from animals; --> computes number of rows with distinct leg entries
+  - Use of distinct key word just takes unique entries for desired column
+- Be careful with selecting a single value along with an aggregation
+
+
+- Aggregate function transforms all the rows in a group of the table
+- Rows in a table can be grouped
+
+select [columns] from [table] group by [expression] having [expression];
+- Number of groups is the number of unique values of an expression
+
+Using the table above: animals * Assume 3 animals have 4 legs, 3 have 2 legs *
+select legs, max(weight) from animals group by legs;
+  - Partitions the table into 2 groups by # of legs: 2 legged, 4 legged
+  - Then, it find legs/max(weight) for each of the partitioned groups
+  - Returns a 2 row table
+
+select legs from animals group by legs; --> Gives # of legs for each group of animals by # legs
+select legs, weight from animals group by legs, weight;
+  - First, it groups by the unique combos for legs/weights
+  - Then, it selects the legs/weight columns for each group
+  - Result is just a table with those 2 columns
+  - This is an example of grouping over more than 1 column
+
+select max(kind), weight/legs from animals group by weight/legs;
+  - Shows that we are able to group by a mathematical operation using 2 column names
+  - Groups by unique combinations of weight/legs of animals
+  - Then, for each of those groups, returns a row of max(kind), weight/legs
+
+Having clause: filters set of groups that are aggregated
+- Contrasts with the where clause that filters individual rows
+select weight/legs, count(*) from animals group by weights/legs having count(*) > 1
+  - We keep a column of weight/legs and count of the groups of animals that have more than 1 row

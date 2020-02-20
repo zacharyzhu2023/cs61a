@@ -1,0 +1,27 @@
+Exceptions
+- Built in mechanism in a programming language to declare and respond to exceptional conditions
+- Python automatically raises an exception if an error occurs
+- Exceptions can be handled by a programming
+- Sometimes it's helpful to be able build a program to deal with Exceptions
+    - Exceptions should be treated as objects--have classes w/ constructors
+    - Enable non-local continuation of control
+        - Continue processing in another frame
+- assert <expression>, <string>
+    - Assertions are supposed to be used whenever you want, essentially
+    - You can turn them on or off for efficiency
+- TypeError-Func tion passed wrong type of argument/type of argument
+- NameError-Name not found
+- KeyError-Key isn't in a dictionary
+
+
+Try statements handle Exceptions
+- <try suite> is executed first
+- If there's an error, an exception is raised that is not handled
+- If the class of the exception inherits from <exception class>
+    - The <except suite> is executed, with <name> bound to the execution
+
+
+try:
+    <try suite>
+except <exception class> as <name>:
+    <except suite>

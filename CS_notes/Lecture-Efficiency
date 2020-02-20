@@ -1,0 +1,53 @@
+Efficient Sequence Processing
+-Map, filter, reduce can manipulate sequences using compact expressions
+
+# Pretend that the prime function is given
+# Function that sums all primes from a to b inclusive
+def sum_primes(a,b):
+  total = 0
+  x = a
+  while x < b:
+    if is_prime(a):
+      total = total + x
+    x = x + 1
+  return total
+
+- This function takes linear space because it only tracks x, a, and b
+
+Alternatively, it can be written as:
+def sum_primes(a,b):
+  return sum(filter(is_prime, range(a,b)))
+
+- range(a,b) generates all the numbers from a to b
+- filtering that range variable results in only prime numbers
+- Then, we can take the sum of the remaining numbers with sum function over an iterable
+  - Range takes constant space because it only calls a number when it needs it
+    - It doesn't actually generate all the numbers at once
+    - Filter and sum keep track of one number and take from range, so ends up being constant space
+
+# Definition of is_prime that runs in constant space
+def is_prime(x):
+  if x <= 1:
+    return False
+  return all(map(lambda y: x % y), range(2,x))
+
+# Scheme Way of range
+(define (range a b)
+  (if (>= a b) nil (cons a (range (+ a 1) b)))
+)
+
+# Sum of all numbers in a list
+(define (sum s)
+  (reduce + s 0)
+)
+
+# Check to see if a number is prime
+(define (prime? x)
+  (if (<=x 1) false
+  (null? (filter (lambda (y) (= 0 (remainder x y))) (range 2 x))))
+)
+
+# Sum the prime numbers in scheme
+(define (sum-primes a b)
+  (sum (filter prime? (range a b)))
+)

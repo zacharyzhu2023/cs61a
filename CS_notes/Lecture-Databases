@@ -1,0 +1,96 @@
+Lecture-Databases
+
+
+Creating/deleting tables
+
+- Create table statement does exactly that: creates a table
+
+create table if not exists [table name] (column-def)/as select
+
+column-def: column name with constraints
+
+Examples:
+create table numbers (n, note); --> creates a table numbers with columns n and note
+create table numbers (n unique, note); --> creates a table numbers with columns n and note
+  - However, gets rid of entries for n that already exist
+create table numbers (n, note default "No comment"); --> creates a table with columns n and note
+  - Default value for note column is "No comment"
+
+Drop table: removes a table if it exists
+Syntax: drop table if exists [table name]
+
+
+
+Modifying Tables
+Insert into [table name] (column-name) values (expression)/(select-all)
+* Hypothetical 2 column table t *
+  - To insert into one column: insert into t(column) values (value)
+    - This statement creates a new row, with value used for the specified column
+      while the other column uses the default value
+  - To insert into both columns: insert into t values (value0, value1)
+    - New row is created with value0, value1 as entries
+
+create table primes(n, prime); --> creates an empty table
+drop table if exists primes; --> destroys this table
+create table primes (n unique, prime default 1) --> new table has unique entries for n and defaults to is prime = True (with 1)
+insert into primes values (2,1), (3,1);
+  - Creates the table with 2,1 as one row, and 3,1 as the other
+insert into primes(n) values (4), (5), (6), (7)
+  - First column is 2,3,4,5,6,7. Second is all 1's b/c 1 is the default
+insert into primes(n) select n+6 from primes;
+  - First column is 2-13. Second is still all 1's using the default
+  - First column takes all the entries that exists and adds 6 to create new rows
+- Syntax for update statement: update [table-name] set [column-name] = [expr] where [expression]
+update primes set prime = 0 where n > 2 and n % 2 = 0
+update primes set prime = 0 where n > 3 and n % 3 = 0
+update primes set prime = 0 where n > 5 and n % 5 = 0
+  - Those 3 update statements ensure that the prime numbers are correctly identified in the table
+- Syntax to delete rows: delete from [table-name] where [expression]
+  - If the where statement isn't included, all rows will be deleted
+    - The table however still exists, just has no entries
+    - Differs from delete table which removes all semblance of the table altogether
+delete from primes where prime = 0;
+  - Deletes all the non-prime numbers from the table
+
+
+
+Python and SQL
+- Python and SQl can be used in conjunction
+
+import sqlite3 # Built in Python module
+do = sqlite3.Connection('n.db') # Passes in a database file
+do.execute('create table nums select 2 union select 3;');
+  - Able to create a table called nums and "work" with it
+do.execute('Insert into nums values (?), (?), (?);', range(4,7))
+  - We have 3 unknown values to fill in as rows
+  - The python range function provides values for these missing spots
+do.execute('select * from nums;').fetchall()
+  - Execute will return a cursor object that will returns a list of tuples
+  - Each tuple represents one of the rows
+do.commit()
+  - This method stores the changes to the database in the file as constructed
+
+
+SQL Injection Attack
+name = "Robert'); drop table students; --"
+cmd = "insert into students values ('" + name + "');"
+db.executescript(cmd)
+  - The following statements become: insert into students values ('Robert'); drop table students; --');
+    - Creates the table Students with the value Robert
+    - Then it destroys the table Students
+    - Finally, the last line is a comment string
+    - Runs, but drops the table --> result of using string concactenation
+db.execute('Insert into Students values (?)', [name])
+  - This is the better way of inserting a value into the table using Python
+  - Prevents a SQL injection attack
+  - This becomes: insert into Students values ('Robert''); drop table Students; --');
+    - Has an extra apostrophe
+    - As a general practice, use the database.execute method in Python's SQL
+
+
+Database Connections
+* Taking a look through the lens of blackjack *
+- Player is dealt 2 cards, dealer is dealt 1 card facing up, 1 card face down
+- Goal: have more points than the dealer but don't go over 21
+- It's possible to use SQL and Python in conjunction when a database is necessary
+  - SQL is useful for keeping track of a large quantity information of a large quantity of individuals

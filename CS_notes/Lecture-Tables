@@ -1,0 +1,66 @@
+Tables
+
+- Two tables A & B are joined by comma to yield all combos of rows from A & rows from B
+
+# Sample table with dog and fur type
+create table dogs as
+    select "abraham" as name, "long" as fur union
+    select "barack", "short" union
+    select "clinton", "long";
+
+# Table with the dog's parent and the child
+create table parents as
+    select "abraham" as parent, "barack" as child union
+    select "abraham", "clinton";
+
+Task: select parents of curly furred dogs
+select parent from parents, dogs
+  where child = name and fur = "curly";
+
+select * from parents, dogs
+  where child = name
+
+- Things get murkier is two tables share the same column name
+  - Deal with this problem using dot expressions and aliases
+
+
+select [columns] from [table] where [condition] order by [order]
+
+Task: select all pairs of siblings
+
+select a.child as first, b.child as second
+  from parents as a, parents as b
+    where a.parent = b.parent and a.child < b.child
+
+- (parents as a) --> gives parents table an alias
+- Dot expressions allows you to reference which table you're getting data from
+
+
+Numerical expressions in SQL are similar to those in Python
+- Use the normal numerical operations
+- abs, round, not
+- Compare values: <, <=, >, =, !=, <>
+
+* Given: a table cities with latitude, longitude, and name *
+
+# Table that uses the comparison operators
+create table north as
+  select name from cities where latitude >= 43
+
+# Table that utilizes arithmetic
+create table distances as
+  select a.name as first, b.name as second
+    60 * (b.latitude - a.latitude) as distance
+    from cities as a, cities as b
+
+
+SQL also can deal with string expressions
+- String values can be combined to form larger strings
+select "hello, " || "world"; --> hello, world
+
+create table phrase as select "hello, world" as s;
+select substr(s, 4, 2) || substr(s, instr(s, " ")+1, 1) from phrase
+- First component selects a substring from s starting at 4 that's 2 characters long
+- Second component selects a substring from s that starts from the place right after
+the location of the first space of length 1 from phrase
+- || operator concactenates the two substrings together

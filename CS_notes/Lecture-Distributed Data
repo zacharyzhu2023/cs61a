@@ -1,0 +1,74 @@
+Lecture-Distributed Data
+
+Computer Systems
+- Systems research defines and implements abstractions
+  - Operation systems: provides a reliable interface
+  - Networks: data transfer interface
+  - Databases: Declarative interface to store/retrieve information
+  - Distributed Systems: provide unified interface
+- Effectives systems should reduce complexity while maintaining flexibility
+- Unix Operating System characteristics
+  1. Portability-Same operating system across different hardware
+  2. Multi-tasking-Many things done at the same time
+  3. Plain text-Data should be stored as text
+  4. Modularity-Small tools are created flexibly via pipes
+- A process in Unix is like a function: takes in an input and has an output
+  - Takes in a standard input and has a standard output
+    - The default should be text for both
+    - Has a standard error as well
+- Python is supposed to accommodate the Unix environment
+  - Python can import files, and use read/write
+  - Input/print functions  use the standard input/output of Unix
+
+Big Data
+- Big data is supposed to refer to a more comprehensive set of information
+- There's also the interpretation that it's just a "large" dataset
+- Big data can be processed with the same hardware available to consumers
+  - Independent computers are stored in racks and work together
+- Here's the question: how can we ensure that when one computer breaks, the program doesn't break down?
+
+Apache Spark
+- Apache Spark: data processing system that provides an interface for large data
+- Resilient Distributed Dataset (RDD): collection of values/key-value pairs
+- Supports the following UNIX operations: sort, distinct, count, pipe
+- Support the following sequence operations: map, filter, reduce
+- Supports the following database operations: join, union, intersection
+- Key concept: all operations can be performed on RDD even if the data is divided across the machines
+- Execution model:
+  - Processing is defined centrally but executed remotely
+  - The work is distributed in partitions to these so-called "worker nodes"
+- Driver program defines transformations/actions on the RDD
+- Then, the cluster manager assigns tasks to worker nodes to be carried out
+- Worker nodes only complete their given task
+  - Sometimes they do have to communicate with other nodes for info
+- Finally, the final result is communicated back to the driver program
+- SparkContext: provides access to cluster manager
+- Apache Spark benefits are as following:
+  - Cluster manager automatically reruns failed tasks(fault tolerance)
+  - Runs the same task multiple times and only keeps the first result that's finished (speed)
+  - Cluster manager optimizes computation of machines that hold data (network locality)
+    - There isn't unnecessary transfer/sharing of information, which can be expensive
+  - Cluster manager shows you what tasks are being run
+
+MapReduce
+- Map reduce was a distributed processing system developed at Google
+  - Included many data processing capabilities
+- Each element in an input produced 0+ key/value pairs (map)
+  - Then, the pairs that share a key are aggregated together (reduce)
+  - Values for a key are processed as a sequence (reduce)
+- Map phase: mapper function is applied to every input
+- Reduce phase: apply reducer function to accumulate values for the same key
+  - Key/value pairs with the same key are processed together
+  - A value is assigned to an intermediate key
+
+Examples in Apache Spark:
+1. data.flatMap(fn)
+  - Data is values
+  - function input is 1 value
+  - function output is 0+ key/value pairs
+  - Final result is all key/value pairs returned by calls to fn
+2. data.reduceByKey(fn)
+  - Data is key/value pairs
+  - Function input is 2 values
+  - Function output is 1 value
+  - result is one key/value pair for each unique key
